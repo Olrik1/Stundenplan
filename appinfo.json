@@ -1,0 +1,26 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "de.olrikheuser",
+    "longName": "Stundenplan",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "images/Stundenplan.png",
+                "menuIcon": true,
+                "name": "ICON",
+                "type": "png"
+            }
+        ]
+    },
+    "shortName": "Plan",
+    "uuid": "69edc3d1-66d6-469d-aa97-3457d4a9c37c",
+    "versionCode": 1,
+    "versionLabel": "0.1",
+    "watchapp": {
+        "watchface": true
+    }
+}
