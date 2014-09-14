@@ -3,12 +3,12 @@
 //144*168
   
 const int times[] = {0,440,505,552,572,617,664,679,724,770,815,860,905,920,965,1010,1440};
-const char plan[7][16][25] = {{"---","FREI","Mathematik R.83","PAUSE","Physik R.201","Physik R.201","PAUSE","Deutsch R.114","Deutsch R.114","FREI","FREI","FREI","PAUSE","Kunst R.170","Kunst R.170","---"},
+const char plan[7][16][25] = {{"Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende"},
+                              {"---","FREI","Mathematik R.83","PAUSE","Physik R.201","Physik R.201","PAUSE","Deutsch R.114","Deutsch R.114","FREI","FREI","FREI","PAUSE","Kunst R.170","Kunst R.170","---"},
                               {"---","Englisch R.183","Englisch R.183","PAUSE","FREI","Mathe R.???","PAUSE","Religion R.259","Religion R.259","FREI","Chemie R.175","Chemie R.175","PAUSE","Sport","Sport","---"},
                               {"---","Sozialkunde R.K83","Physik R.205","PAUSE","Geschichte R.183","Mathe R.114","PAUSE","Informatik R.173","FREI","Kunst R.173","Orchester","Orchester","---","---","---","---"},
                               {"---","Englisch R.184","Chemie R.156","PAUSE","Mathe R.112","FREI","PAUSE","Physik R.201","FREI","FREI","Geschichte R.181","Geschichte R.181","PAUSE","Informatik R.173","Informatik R.173","---"},
                               {"---","Sozialkunde R.K83","Gechichte R.184","PAUSE","Mathe R.153","FREI","PAUSE","Physik R.205","FREI","Deutsch R.181","Chor","Chor","WOCHENENDE!!","Wochenende","Wochenende","Wochenende"},
-                              {"Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende"},
                               {"Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende"}};
   
 Window *mainWindow;
@@ -43,10 +43,9 @@ static void update_time() {
   strftime(buffer, sizeof("00:00"), "%H:%M", tick_time);
   text_layer_set_text(timeLayer, buffer);
   
+  //Get Current Hour
   int curHour = 0;
-  
   int minOfDay = tick_time->tm_hour * 60 + tick_time->tm_min;
-  
   for(int i = 0;times[i+1];i++){
     if(times[i+1]>minOfDay){
       curHour = i;
@@ -54,8 +53,14 @@ static void update_time() {
     }
   }
   
-  text_layer_set_text(nextClass, plan[tick_time->tm_wday][curHour]);
+  //set NextClass
+  if((times[curHour+1]-minOfDay)<5){
+    text_layer_set_text(nextClass, plan[tick_time->tm_wday][curHour+1]);
+  }else{
+    text_layer_set_text(nextClass, plan[tick_time->tm_wday][curHour]);
+  }
   
+  //Set Time & Percent Fields
   char *passedNumInt = "1000 min";
   snprintf(passedNumInt, 10, "%d min", minOfDay-times[curHour]);
   text_layer_set_text(passedNum, passedNumInt);
@@ -67,21 +72,12 @@ static void update_time() {
   char *passedPercInt = "2000 min";
   double passed = (((double)minOfDay-(double)times[curHour])*100/((double)times[curHour+1]-(double)times[curHour]));
   floatToString(passedPercInt, 10, passed);
-  //snprintf(passedPercInt, 10, "%g\%%", passed);
   text_layer_set_text(passedPerc, passedPercInt);
   
   char *remainingPercInt = "200 min";
   double remaining = (double)100-passed;
   floatToString(remainingPercInt, 10, remaining);
-  //snprintf(remainingPercInt, 10, "%d\%%", minOfDay-times[curHour+1]);
   text_layer_set_text(remainingPerc, remainingPercInt);
-  
-  //int temp2 = tick_time->tm_hour * 60 + tick_time->tm_min;
-  //snprintf(buffer2, sizeof(buffer2), "%d", temp2);
-  
-  // Display this time on the TextLayer
-
-  //text_layer_set_text(passedNum, buffer2);
 }
 
 void mainWindow_load(Window *thisWindow){
