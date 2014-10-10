@@ -2,12 +2,12 @@
 
 //144*168
   
-const int times[] = {0,440,505,552,572,617,664,679,724,770,815,860,905,920,965,1010,1440};
+const int times[] = {0,460,505,552,572,617,664,679,724,770,815,860,905,920,965,1010,1440};
 const char plan[7][16][25] = {{"Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende"},
                               {"---","FREI","Mathematik R.83","PAUSE","Physik R.201","Physik R.201","PAUSE","Deutsch R.114","Deutsch R.114","FREI","FREI","FREI","PAUSE","Kunst R.170","Kunst R.170","---"},
-                              {"---","Englisch R.183","Englisch R.183","PAUSE","FREI","Mathe R.???","PAUSE","Religion R.259","Religion R.259","FREI","Chemie R.175","Chemie R.175","PAUSE","Sport","Sport","---"},
-                              {"---","Sozialkunde R.K83","Physik R.205","PAUSE","Geschichte R.183","Mathe R.114","PAUSE","Informatik R.173","FREI","Kunst R.173","Orchester","Orchester","---","---","---","---"},
-                              {"---","Englisch R.184","Chemie R.156","PAUSE","Mathe R.112","FREI","PAUSE","Physik R.201","FREI","FREI","Geschichte R.181","Geschichte R.181","PAUSE","Informatik R.173","Informatik R.173","---"},
+                              {"---","Englisch R.183","Englisch R.183","PAUSE","FREI","Mathe R.110","PAUSE","Religion R.83","Religion R.83","FREI","Chemie R.157","Chemie R.157","PAUSE","Sport","Sport","---"},
+                              {"---","Sozialkunde R.K83","Physik R.205","PAUSE","Geschichte R.183","Mathe R.114","PAUSE","Informatik R.173","FREI","Kunst R.170","Orchester","Orchester","---","---","---","---"},
+                              {"---","Englisch R.184","Chemie R.156","PAUSE","Mathe R.112","FREI","PAUSE","Physik R.201","FREI","FREI","Geschichte R.182","Geschichte R.182","PAUSE","Informatik R.173","Informatik R.173","---"},
                               {"---","Sozialkunde R.K83","Gechichte R.184","PAUSE","Mathe R.153","FREI","PAUSE","Physik R.205","FREI","Deutsch R.181","Chor","Chor","WOCHENENDE!!","Wochenende","Wochenende","Wochenende"},
                               {"Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende","Wochenende"}};
   
@@ -26,7 +26,12 @@ char* floatToString(char* buffer, int bufferSize, double number)
 	snprintf(buffer, bufferSize, "%d", (int)number);
 	strcat(buffer, ".");
   
-	snprintf(decimalBuffer, 5, "%01d", (int)((double)(number - (int)number) * (double)10));
+  if(number<0){
+    snprintf(decimalBuffer, 5, "%01d", (int)((double)(number - (int)number) * (double)-10));
+  }else{
+    snprintf(decimalBuffer, 5, "%01d", (int)((double)(number - (int)number) * (double)10));
+  }
+	
 	strcat(buffer, decimalBuffer);
   strcat(buffer, "%");
   
@@ -54,7 +59,9 @@ static void update_time() {
   }
   
   //set NextClass
-  if((times[curHour+1]-minOfDay)<5){
+  if((times[curHour+1]-minOfDay)<=5){
+    if((times[curHour+1]-minOfDay)==5) vibes_short_pulse();
+    if((times[curHour+1]-minOfDay)==3) vibes_double_pulse();
     text_layer_set_text(nextClass, plan[tick_time->tm_wday][curHour+1]);
   }else{
     text_layer_set_text(nextClass, plan[tick_time->tm_wday][curHour]);
@@ -75,7 +82,7 @@ static void update_time() {
   text_layer_set_text(passedPerc, passedPercInt);
   
   char *remainingPercInt = "200 min";
-  double remaining = (double)100-passed;
+  double remaining = passed-(double)100;
   floatToString(remainingPercInt, 10, remaining);
   text_layer_set_text(remainingPerc, remainingPercInt);
 }
